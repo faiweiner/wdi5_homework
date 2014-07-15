@@ -33,7 +33,7 @@ var lineCount = function() {
   };
 };
 
-var directionTest = function () {
+var legAnalysis = function () {
   if (lineCount() === 1) {
     if (startIndex < stopIndex) {
       return "upline";
@@ -42,13 +42,13 @@ var directionTest = function () {
     };
   } else if (lineCount() > 1 ) {
     // leg 1
-    if (startIndex < UnionIndex(startLine)) {
+    if (startIndex < unionIndex(startLine)) {
       var leg1 = "upline THEN";
     } else {
       var leg1 = "downline THEN";
     };
     // leg 2
-    if (UnionIndex(stopLine) > stopIndex) {
+    if (unionIndex(stopLine) > stopIndex) {
       var leg2 = "... downline.";
     } else {
       var leg2 = "... upline.";
@@ -64,46 +64,74 @@ var getIndex = function(line, station) {
   return index;
 };
 
-var UnionIndex = function(line) {
+var unionIndex = function(line) {
   var index = network[line].indexOf("Union Square");
   return index;
 };
 
-var slicingJourney = function () {};
+// Function creates an array copy with the full list of a given line's stations; reverse determines succession
+var stopsArray = function (line, reverse) {
+  if (reverse === true) {
+    console.log("I'm about to flip this shit and reverse it.");
+    var journey = network[line].reverse();
+  } else {
+    console.log("I love this easy peasy no flippidy.");
+    var journey = network[line]; 
+  };
+  console.log(journey);
+  return journey;
+};
 
-var getJourney = function() {
-  if (directionTest() === "upline") {
-    console.log("we're going up!");
-    var journey = network[startLine].slice(startIndex + 1, stopIndex + 1);
-    console.log("There are " + journey.length + " stop(s) between " + startStation + " and " + stopStation + ".")
-    console.log("Your journey: " + journey);
-  } else if (directionTest() === "downline" ) {
-    console.log("we're going down!");
-    var journey = network[startLine].reverse().slice((network[startLine].indexOf(startStation) + 1),(network[stopLine].indexOf(stopStation) + 1));
-    console.log("There are " + journey.length + " stop(s) between " + startStation + " and " + stopStation + ".");
-    console.log("Your journey: " + journey);
-  } else if (directionTest() === "upline THEN... downline."){
-    var journey1 = network[startLine].slice(startIndex + 1, UnionIndex(startLine) + 1);
-    var journey2 = network[stopLine].reverse().slice(network[stopLine].indexOf("Union Square") + 1, network[stopLine].indexOf(stopStation) + 1);
-    console.log("There are " + ( journey1.length + journey2.length ) + " stop(s) between " + startStation + " and " + stopStation + ".");
+var resultsInEnglish = function(i) {
+  console.log("There are " + i.length + " stop(s) between " + startStation + " and " + stopStation + ".");
+  console.log("Your journey: " + i)
+};
+
+var journeyArray = function(journey1, journey2) {
+  if (journey2 === undefined) {
+    for (i = 0; i < journey1.length; i++) {
+      journey
+    }
+    console.log("Your journey: " + journey1);
+  } else {
+    console.log("Your journey: plus more" + journey1);
+  };
+};
+
+var getResults = function() {
+  if (legAnalysis() === "upline") {
+    var journey1 = stopsArray(startLine, false).slice(startIndex + 1, stopIndex + 1);
+    resultsInEnglish(journey1);
+    console.log("Your journey: " + journey1);
+
+  } else if (legAnalysis() === "downline" ) {
+    var journey1 = stopsArray(startLine, true).slice((network[startLine].indexOf(startStation) + 1),(network[stopLine].indexOf(stopStation) + 1));
+    resultsInEnglish(journey1);
+    console.log("Your journey: " + journey1);
+
+  } else if (legAnalysis() === "upline THEN... downline."){
+// GOOD
+    var journey1 = stopsArray(startLine, false).slice(startIndex + 1, unionIndex(startLine) + 1);
+    var journey2 = stopsArray(stopLine, true).slice(unionIndex(stopLine) + 1, network[stopLine].indexOf(stopStation) + 1);
+    resultsInEnglish(journey1 + journey2);
     console.log("Your journey: " + journey1 + " [TRANSFER] " + journey2);
 // GOOD
-  } else if (directionTest() === "upline THEN... upline."){
-    var journey1 = network[startLine].slice(startIndex + 1, UnionIndex(startLine) + 1);
-    var journey2 = network[stopLine].slice(UnionIndex(stopLine) + 1, stopIndex + 1);
-    console.log("There are " + ( journey1.length + journey2.length ) + " stop(s) between " + startStation + " and " + stopStation + ".");
+  } else if (legAnalysis() === "upline THEN... upline."){
+    var journey1 = stopsArray(startLine, false).slice(startIndex + 1, unionIndex(startLine) + 1);
+    var journey2 = stopsArray(stopLine, false).slice(unionIndex(stopLine) + 1, stopIndex + 1);
+    resultsInEnglish(journey1 + journey2);
     console.log("Your journey: " + journey1 + " [TRANSFER] " + journey2);  
 // GOOD
-  } else if (directionTest() === "downline THEN... upline."){
-    var journey1 = network[startLine].reverse().slice(network[startLine].indexOf(startStation) + 1, network[startLine].indexOf("Union Square") + 1);
-    var journey2 = network[stopLine].slice(UnionIndex(stopLine) + 1, stopIndex + 1);
-    console.log("There are " + ( journey1.length + journey2.length ) + " stop(s) between " + startStation + " and " + stopStation + ".");
+  } else if (legAnalysis() === "downline THEN... upline."){
+    var journey1 = stopsArray(startLine, true).slice(network[startLine].indexOf(startStation) + 1, unionIndex[startLine] + 1);
+    var journey2 = stopsArray(stopLine, false).slice(unionIndex(stopLine) + 1, stopIndex + 1);
+    resultsInEnglish(journey1 + journey2);
     console.log("Your journey: " + journey1.reverse() + " [TRANSFER] " + journey2);  
 // GOOD
-  } else if (directionTest() === "downline THEN... downline."){
-    var journey1 = network[startLine].reverse().slice(network[startLine].indexOf(startStation) + 1, network[startLine].indexOf("Union Square") + 1);
-    var journey2 = network[stopLine].reverse().slice(network[stopLine].indexOf("Union Square") + 1, network[stopLine].indexOf(stopStation) + 1);
-    console.log("There are " + ( journey1.length + journey2.length ) + " stop(s) between " + startStation + " and " + stopStation + ".");
+  } else if (legAnalysis() === "downline THEN... downline."){
+    var journey1 = stopsArray(startLine, true).slice(stopsArray(startLine, false).indexOf(startStation) + 1, unionIndex(startLine) + 1);
+    var journey2 = stopsArray(stopLine, false).slice(unionIndex(stopLine) + 1, stopsArray(stopLine, false).indexOf(stopStation) + 1);
+    resultsInEnglish(journey1 + journey2);
     console.log("Your journey: " + journey1 + " [TRANSFER] " + journey2);  
   } else {
     console.log("Invalid.")
@@ -111,16 +139,12 @@ var getJourney = function() {
 };
 
 // ALL THINGS START POSITION
-// SEED IF NEEDED: var startLineInput = "L";
-// SEED IF NEEDED: var startStation = "1st";
 var startLineInput = getInput("Type in start line.", "6, " + "L or " + "N");
 var startLine = transformLine(startLineInput);
 var startStation = getInput("What is your start station?", network[startLine]);
 var startIndex = getIndex(startLine, startStation);
 
 // ALL THINGS STOP POSITION
-// SEED IF NEEDED: var stopLineInput = "N";
-// SEED IF NEEDED: var stopStation = "Times Square";
 var stopLineInput = getInput("Type in stop line.", "6, " + "L or " + "N");
 var stopLine = transformLine(stopLineInput);
 var stopStation = getInput("What is your stop station?", network[stopLine]);
@@ -130,4 +154,4 @@ var stopIndex = getIndex(stopLine, stopStation);
 console.log("Start Station: " + startStation + " on Line " + startLineInput);
 console.log("Stop Station: " + stopStation + " on Line " + stopLineInput);
 
-getJourney();
+getResults();
