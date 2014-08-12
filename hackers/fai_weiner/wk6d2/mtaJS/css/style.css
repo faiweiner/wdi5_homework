@@ -1,0 +1,32 @@
+body {
+  background-color: white;
+}
+
+li {
+  width: 100px;
+  height: 40px;
+}
+
+.menu .menu_box { 
+  position: relative; 
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu_box {
+  display: block;
+  border: 1px solid black;
+}
+
+.menu_line_level {
+  position: relative;
+  display: block;
+}
+
+.line_options {
+  border: 1px solid blue;
+}
